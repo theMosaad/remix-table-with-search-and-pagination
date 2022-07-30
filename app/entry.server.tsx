@@ -28,13 +28,13 @@ export const handleDataRequest = async (
   }
 ) => {
   const isGet = request.method.toLowerCase() === 'get'
-  const purpose =
-    request.headers.get('Purpose') ||
-    request.headers.get('X-Purpose') ||
-    request.headers.get('Sec-Purpose') ||
-    request.headers.get('Sec-Fetch-Purpose') ||
-    request.headers.get('Moz-Purpose')
-  const isPrefetch = purpose === 'prefetch'
+  let purpose =
+    request.headers.get('Purpose') || // chrome, safari, and edge
+    request.headers.get('X-Purpose') || // old chrome
+    request.headers.get('Sec-Purpose') || // future chrome
+    request.headers.get('Sec-Fetch-Purpose') || // future chrome
+    request.headers.get('X-Moz') // firefox
+  let isPrefetch = purpose === 'prefetch'
 
   if (isGet && isPrefetch && !response.headers.has('Cache-Control')) {
     response.headers.set('Cache-Control', 'private, max-age=30')
